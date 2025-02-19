@@ -1,131 +1,68 @@
-# syslog-linked-list
 # Syslog Log Yönetim Sistemi
 
 ## Proje Açıklaması
 Bu proje, Linux işletim sisteminde sistem günlüklerini (syslog) yönetmek ve işlemek amacıyla geliştirilmiştir. Log kayıtlarını verimli bir şekilde saklamak, filtrelemek ve yönetmek için çift yönlü bağlı liste (doubly linked list) veri yapısı kullanılmaktadır. Uygulama, belirli kriterlere göre logları listeleyebilir, eski kayıtları silebilir ve tüm logları temizleyebilir.
 
 ## Özellikler
-- **Çift Yönlü Bağlı Liste Yapısı**: Log ekleme ve silme işlemleri verimli bir şekilde yapılır.
-- **Log Ekleme**: Dinamik olarak yeni log ekleme desteği.
-- **Önem Derecesine Göre Filtreleme**: ERROR, WARNING, INFO gibi önem seviyelerine göre logları listeleme.
-- **Zaman Aralığına Göre Filtreleme**: Belirli bir zaman aralığındaki logları getirme.
-- **Tüm Logları Temizleme**: Listedeki tüm logları temizleme.
-- **Eski Logları Silme**: Belirtilen zamandan daha eski logları kaldırma.
 
-## Veri Yapıları
+- **Dinamik Bellek Yönetimi:** Log girişleri dinamik olarak tahsis edilir ve bellek sızıntılarını önlemek için serbest bırakılır.
+- **Çift Yönlü Bağlı Liste Kullanımı:** Loglar, çift yönlü bağlı liste yapısı kullanılarak saklanır.
+- **Zaman Damgası Desteği:** Her log girişine otomatik olarak bir zaman damgası eklenir.
+- **Farklı Log Seviyeleri:** "INFO", "WARNING", "ERROR" gibi log seviyeleri ile giriş yapılabilir.
+- **Kolay Kullanım:** Yeni log ekleme, logları yazdırma ve temizleme işlemleri için fonksiyonlar sağlanmıştır.
+- **Log Filtreleme:** Belirli kriterlere göre logları filtreleme özelliği.
+- **Eski Kayıtları Silme:** Belirli bir zamandan önce oluşturulmuş logları temizleme.
 
-### `SyslogNode`
-Bir log kaydını temsil eden yapı:
-```c
-typedef struct SyslogNode {
-    time_t timestamp;
-    char facility[MAX_FACILITY_LENGTH];
-    char severity[MAX_SEVERITY_LENGTH];
-    char message[MAX_MSG_LENGTH];
-    struct SyslogNode* next;
-    struct SyslogNode* prev;
-} SyslogNode;
+## Kullanım
+
+### Derleme ve Çalıştırma
+
+Bu kodu çalıştırmak için bir C derleyicisine ihtiyacınız vardır. GCC kullanarak şu şekilde derleyebilirsiniz:
+
+```sh
+gcc syslog_linked_list.c -o syslog_linked_list
+./syslog_linked_list
 ```
 
-### `SyslogList`
-Bağlı listeyi temsil eden yapı:
-```c
-typedef struct {
-    SyslogNode* head;
-    SyslogNode* tail;
-    size_t count;
-} SyslogList;
+### Örnek Çıktı
+
+Kod çalıştırıldığında aşağıdaki gibi bir çıktı üretilecektir:
+
+```
+Tüm Loglar:
+------------------------
+[2025-02-19 12:30:45] WARNING: Disk alanı azalıyor
+[2025-02-19 12:30:45] INFO: Uygulama başlatıldı
+[2025-02-19 12:30:45] ERROR: Sistem hatası oluştu
 ```
 
 ## Fonksiyonlar
 
-### Listeyi Başlatma
-```c
-void initSyslogList(SyslogList* list);
-```
-Boş bir `SyslogList` başlatır.
+### `void initLogList(LogList* list)`
 
-### Yeni Log Düğümü Oluşturma
-```c
-SyslogNode* createNode(time_t timestamp, const char* facility, 
-                      const char* severity, const char* message);
-```
-Belirtilen parametrelerle yeni bir log düğümü oluşturur.
+Log listesini başlatır.
 
-### Log Ekleme
-```c
-int appendLog(SyslogList* list, time_t timestamp, const char* facility, 
-              const char* severity, const char* message);
-```
-Listeye yeni bir log kaydı ekler.
+### `void addLog(LogList* list, const char* severity, const char* message)`
 
-### Önem Derecesine Göre Logları Yazdırma
-```c
-void printLogsBySeverity(const SyslogList* list, const char* severity);
-```
-Belirtilen önem seviyesindeki tüm logları ekrana yazdırır.
+Yeni bir log girişini listeye ekler.
 
-### Tüm Logları Yazdırma
-```c
-void printAllLogs(const SyslogList* list);
-```
-Listedeki tüm logları ekrana yazdırır.
+### `void printLogs(LogList* list)`
 
-### Zaman Aralığına Göre Logları Yazdırma
-```c
-void printLogsByTimeRange(const SyslogList* list, time_t start, time_t end);
-```
-Belirtilen zaman aralığındaki logları ekrana yazdırır.
+Tüm log girişlerini ekrana yazdırır.
 
-### Listeyi Temizleme
-```c
-void clearList(SyslogList* list);
-```
-Listedeki tüm logları siler ve belleği serbest bırakır.
+### `void filterLogs(LogList* list, const char* severity)`
 
-### Eski Logları Silme
-```c
-void deleteOldLogs(SyslogList* list, time_t cutoff_time);
-```
-Belirtilen zamandan daha eski olan logları listeden kaldırır.
+Belirtilen şiddet seviyesine göre logları filtreler ve listeler.
 
-## Örnek Kullanım
+### `void deleteOldLogs(LogList* list, time_t threshold)`
 
-```c
-int main() {
-    SyslogList logList;
-    initSyslogList(&logList);
+Belirtilen zamandan eski olan logları siler.
 
-    time_t current_time = time(NULL);
-    appendLog(&logList, current_time, "kernel", "ERROR", "Buffer overflow algılandı");
-    appendLog(&logList, current_time + 60, "auth", "WARNING", "Başarısız giriş denemesi");
-    appendLog(&logList, current_time + 120, "system", "INFO", "Sistem güncellemesi başlatıldı");
+### `void clearList(LogList* list)`
 
-    printf("\nTüm Loglar:\n");
-    printAllLogs(&logList);
-    
-    printf("\nERROR Logları:\n");
-    printLogsBySeverity(&logList, "ERROR");
-    
-    clearList(&logList);
-    return 0;
-}
-```
-
-## Derleme ve Çalıştırma
-
-1. **GCC** kullanarak kodu derleyin:
-   ```sh
-   gcc -o syslog syslog.c
-   ```
-2. Çalıştırın:
-   ```sh
-   ./syslog
-   ```
+Bellekteki log girişlerini temizler.
 
 ## Lisans
-Bu proje **MIT Lisansı** altında lisanslanmıştır.
 
-## Yazar
-**[edaaerol]** tarafından oluşturulmuştur.
+Bu proje MIT Lisansı ile lisanslanmıştır. Daha fazla bilgi için `LICENSE` dosyasına bakabilirsiniz.
 
