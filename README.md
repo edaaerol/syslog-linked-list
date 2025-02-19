@@ -1,8 +1,8 @@
 # syslog-linked-list
 # Syslog Log Yönetim Sistemi
 
-## Genel Bakış
-Bu proje, C dilinde uygulanmış basit bir **Syslog Log Yönetim Sistemi**dir. **Çift yönlü bağlı liste** yapısını kullanarak sistem loglarını verimli bir şekilde saklar ve yönetir. Sistem, log ekleme, logları önem derecesine ve zaman aralığına göre filtreleme ve eski logları silme işlemlerini destekler.
+## Proje Açıklaması
+Bu proje, Linux işletim sisteminde sistem günlüklerini (syslog) yönetmek ve işlemek amacıyla geliştirilmiştir. Log kayıtlarını verimli bir şekilde saklamak, filtrelemek ve yönetmek için çift yönlü bağlı liste (doubly linked list) veri yapısı kullanılmaktadır. Uygulama, belirli kriterlere göre logları listeleyebilir, eski kayıtları silebilir ve tüm logları temizleyebilir.
 
 ## Özellikler
 - **Çift Yönlü Bağlı Liste Yapısı**: Log ekleme ve silme işlemleri verimli bir şekilde yapılır.
