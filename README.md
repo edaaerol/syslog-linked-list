@@ -38,29 +38,17 @@ Tüm Loglar:
 
 ## Fonksiyonlar
 
-### `void initLogList(LogList* list)`
+`void initLogList(LogList* list)`: Log listesini başlatır.
 
-Log listesini başlatır.
+`void addLog(LogList* list, const char* severity, const char* message)`: Yeni bir log girişini listeye ekler.
 
-### `void addLog(LogList* list, const char* severity, const char* message)`
+`void printLogs(LogList* list)`: Tüm log girişlerini ekrana yazdırır.
 
-Yeni bir log girişini listeye ekler.
+`void filterLogs(LogList* list, const char* severity)`: Belirtilen şiddet seviyesine göre logları filtreler ve listeler.
 
-### `void printLogs(LogList* list)`
+`void deleteOldLogs(LogList* list, time_t threshold)`: Belirtilen zamandan eski olan logları siler.
 
-Tüm log girişlerini ekrana yazdırır.
-
-### `void filterLogs(LogList* list, const char* severity)`
-
-Belirtilen şiddet seviyesine göre logları filtreler ve listeler.
-
-### `void deleteOldLogs(LogList* list, time_t threshold)`
-
-Belirtilen zamandan eski olan logları siler.
-
-### `void clearList(LogList* list)`
-
-Bellekteki log girişlerini temizler.
+`void clearList(LogList* list)`: Bellekteki log girişlerini temizler.
 
 ## Lisans
 
