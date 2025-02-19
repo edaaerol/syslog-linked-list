@@ -127,5 +127,5 @@ int main() {
 Bu proje **MIT Lisansı** altında lisanslanmıştır.
 
 ## Yazar
-**[Adınız]** tarafından oluşturulmuştur. Geri bildirim ve katkılarınızı bekliyoruz!
+**[edaaerol]** tarafından oluşturulmuştur. Geri bildirim ve katkılarınızı bekliyoruz!
 
